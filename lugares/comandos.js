@@ -1,13 +1,16 @@
 const { Client } = require('pg')
 const get_distancia = require('./funciones.js')
+const config_object = require('./config.js')
 
+/* En ./config.js
 const config = {
-  user: 'postgres',
-  host: 'localhost',
-  database: 'lugares',
-  password: '1005',
-  port: 5432
+  user: 'user_postgres',
+  host: '123.456.321.422',
+  database: 'nombre_db',
+  password: 'pass',
+  port: PORT
 }
+*/
 const client = new Client(config)
 
 client.connect(err => {
