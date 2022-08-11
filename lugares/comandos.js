@@ -11,7 +11,7 @@ const config = {
   port: PORT
 }
 */
-const client = new Client(config)
+const client = new Client(config_object)
 
 client.connect(err => {
   if (err) {
