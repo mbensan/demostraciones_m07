@@ -19,8 +19,25 @@ async function mostrarLugares () {
   // 1. Solicito un 'cliente' al pool de conexiones
   const client = await pool.connect()
 
-  // 2. Ejecuto la consulta SQL
+  // 2. Ejecuto la consulta SQL (me traigo un array de arrays)
   const respuesta = await client.query('select * from lugares')
+  console.log(respuesta.rows);
+
+  // 3. Devuelvo el cliente al pool
+  client.release()
+  pool.end()
+}
+
+async function mostrarLugaresArray () {
+  // 1. Solicito un 'cliente' al pool de conexiones
+  const client = await pool.connect()
+
+  // 2. Ejecuto la consulta SQL (me traigo un array de arrays)
+  const respuesta = await client.query({
+    text: 'select * from lugares',
+    rowMode: 'array',
+    name: 'lugares-como-arrays'
+  })
   console.log(respuesta.rows);
 
   // 3. Devuelvo el cliente al pool
@@ -32,8 +49,11 @@ async function nuevoLugar (nombre, lat, long) {
   // 1. Solicito un 'cliente' al pool de conexiones
   const client = await pool.connect()
 
-  // 2. Ejecuto la consulta SQL
-  const resp = await client.query(`insert into lugares (nombre, lat, long) values ('${nombre}', ${lat}, ${long}) returning *`)
+  // 2. Ejecuto la consulta SQL (ejemplo de consulta parametrizada)
+  const resp = await client.query(
+    `insert into lugares (nombre, lat, long) values ($1, $2, $3) returning *`,
+    [nombre, lat, long]
+  )
 
   // 3. Devuelvo el cliente al pool
   client.release()
@@ -62,11 +82,29 @@ async function mostrarDistancia(id_lugar1, id_lugar2) {
   pool.end()
 }
 
+async function eliminarLugar (id) {
+  // 1. Solicito un 'cliente' al pool de conexiones
+  const client = await pool.connect()
+
+  // 2. Ejecuto la consulta (consulta parametrizada con un Objeto)
+  await client.query({
+    text: `delete from lugares where id=$1`,
+    values: [id] 
+  })
+
+  // 3. Devuelvo el client al pool
+  client.release()
+  pool.end()
+}
+
 // Interacción con el usuario
 const accion = process.argv[2]
 
 if (accion == 'mostrar') {
   mostrarLugares()
+}
+else if (accion == 'listas') {
+  mostrarLugaresArray()
 }
 else if (accion == 'crear') {
 
@@ -82,6 +120,12 @@ else if (accion == 'distancia') {
   const id_lugar2 = process.argv[4]
 
   mostrarDistancia(id_lugar1, id_lugar2)
+}
+else if (accion == 'eliminar') {
+
+  const id_lugar = process.argv[3]
+
+  eliminarLugar(id_lugar)
 }
 else {
   console.log(`Acción ${accion} no implementada`);
