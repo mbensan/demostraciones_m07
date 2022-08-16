@@ -29,7 +29,6 @@ async function mostrarCitas () {
   return respuesta.rows 
 }
 
-
 async function nuevaCita (nombre, cita) {
   // 1. Solicito un 'cliente' al pool de conexiones
   const client = await pool.connect()
@@ -42,28 +41,6 @@ async function nuevaCita (nombre, cita) {
 
   // 3. Devuelvo el cliente al pool
   client.release()
-}
-
-async function mostrarDistancia(id_lugar1, id_lugar2) {
-  // 1. Solicito un 'cliente' al pool de conexiones
-  const client = await pool.connect()
-
-  // 2. Ejecuto las consultas SQL
-  let lugar1 = await client.query(`select * from lugares where id=${id_lugar1}`)
-  lugar1 = lugar1.rows[0]
-
-  let lugar2 = await client.query(`select * from lugares where id=${id_lugar2}`)
-  lugar2 = lugar2.rows[0]
-
-  // Se calcula la distancia entre los 2 lugares
-  let distancia = get_distancia(lugar1.lat, lugar1.long, lugar2.lat, lugar2.long)
-  distancia = Math.round(distancia)
-  
-  console.log(`La distancia entre ${lugar1.nombre} y ${lugar2.nombre} es de ${distancia} Kms.`);
-  
-  // 3. Devuelvo el cliente al pool
-  client.release()
-  pool.end()
 }
 
 async function eliminarCita (id) {
