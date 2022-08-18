@@ -1,5 +1,5 @@
 const express = require('express');
-const { Ejercicio } = require('./models.js')
+const { Ejercicio, Country, Language } = require('./models.js')
 
 const app = express()
 
@@ -40,10 +40,68 @@ app.post('/ejercicios', async (req, res) => {
   res.json({})
 })
 
+app.get('/crear/pais', async (req, res) => {
+  console.log(req.query);
+  await Country.create({
+    nombre: req.query.nombre,
+    poblacion: 20000000
+  })
+  const paises = await Country.findAll()
+  res.json({paises})
+})
+
+app.get('/crear/ciudad', async (req, res) => {
+  const nombre_pais = req.query.pais
+  const nombre_ciudad = req.query.ciudad
+
+  if (!nombre_pais || !nombre_ciudad) {
+    return res.send('Debe ingresar el nombre del pais y la ciudad')
+  }
+
+  const pais = await Country.findOne({where: {nombre: nombre_pais}})
+  await pais.createCiudad({nombre: nombre_ciudad})
+
+  console.log(pais);
+  res.json({mensaje: 'Ciudad creada'})
+})
+
+app.post('/lenguaje/crear', async (req, res) => {
+  await Language.create({
+    nombre: req.body.nombre
+  })
+  res.redirect('/habla.html')
+})
+
+app.get('/datos', async (req, res) => {
+  const paises = await Country.findAll()
+  const lenguajes = await Language.findAll()
+
+  res.json({ paises, lenguajes })
+})
+
+app.post('/unir', async (req, res) => {
+  const pais_id = parseInt(req.body.pais_id)
+  const lenguaje_id = parseInt(req.body.lenguaje_id)
+
+  if (!pais_id || !lenguaje_id) {
+    return res.send('Faltan variables')
+  }
+  
+  const pais = await Country.findByPk(pais_id)
+  const lenguaje = await Language.findByPk(lenguaje_id)
+  
+  await pais.addLanguage(lenguaje, { through: 'habla'})
+  return res.send('todo ok')
+
+  res.redirect('/habla.html')
+})
+
 app.get('*', (req, res) => {
   res.statusCode = 404
   res.send('Ruta no implementada')
 })
+
+
 
 app.listen(3000, () => {
   console.log(`Servidor en puerto 3000`);

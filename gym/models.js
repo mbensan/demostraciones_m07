@@ -1,22 +1,5 @@
-const Sequelize = require('sequelize');
-
-const db = new Sequelize('gym', 'postgres', '1005', { 
-  //usuario ycontraseña son tus credenciales local MySQL
-  host: 'localhost',
-  dialect: 'postgres'
-});
-
-// IIFE
-(async function () {
-  try {
-    await db.authenticate();
-    console.log('Connection has been established successfully.');
-  } catch (error) {
-    console.error('Unable to connect to the database:', error);
-  }
-})()
-
-const { DataTypes } = require('sequelize');
+const { DataTypes, sequelize } = require('sequelize');
+const db = require('./db_conection.js')
 
 const Ejercicio = db.define('Ejercicio', {
   nombre: {
@@ -46,9 +29,49 @@ const Ejercicio = db.define('Ejercicio', {
   }
 }, { timestamps: true });
 
+const Country = db.define('country', {
+  nombre: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  poblacion: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      min: 1
+    }
+  }
+})
+
+const City = db.define('city', {
+  nombre: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+})
+
+const Language = db.define('language', {
+  nombre: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+})
+
+// Relaciones entre los modelos
+Country.hasMany(City)
+City.belongsTo(Country)
+
+// Relación muchos a muchos
+Country.belongsToMany(Language, {through: 'speak'})
+Language.belongsToMany(Country, {through: 'speak'})
+
 try {
-  Ejercicio.sync()
+  // Ejercicio.sync()
+  // Pais.sync()
+  // Ciudad.sync()
+  // Lenguaje.sync()
+  db.sync()
 } catch (err) {
   console.log(`Error en la sicnronizacion`, err);
 }
-module.exports = { Ejercicio }
+module.exports = { Ejercicio, Country, City, Language }
