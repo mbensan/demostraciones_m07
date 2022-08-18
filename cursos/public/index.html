@@ -45,7 +45,60 @@
     </nav>
     <div class="container">
       <h1 class="text-center">Inscribir Cursos</h1>
+      <div class="row">
+        <div class="col-4">
+          <h4 class="text-center text-primary">Ingresar un Curso</h4>
+          <form method="post" action="/cursos">
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Nombre</label>
+              <input type="text" class="form-control" name="nombre" required aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Horario</label>
+              <input type="text" class="form-control" name="horario" required aria-describedby="emailHelp">
+            </div>
+            <button type="submit" class="btn btn-primary">Crear</button>
+          </form>
+        </div>
+        <div class="col-4">
+          <h4 class="text-center text-warning">Lista de Cursos</h4>
+          <ul class="list-group" id="cursos">
+            <li class="list-group-item">
+              React JS
+              <ul>
+                <li>Marial Dolores</li>
+                <li>Pedro Cabezas</li>
+                <li>Dimitri Seigev</li>
+              </ul>
+            </li>
+            <li class="list-group-item">A second item</li>
+            <li class="list-group-item">A third item</li>
+            <li class="list-group-item">A fourth item</li>
+            <li class="list-group-item">And a fifth one</li>
+          </ul>
+        </div>
+        <div class="col-4">
+          <h4 class="text-center text-success">Agregar Alumnos</h4>
+          <form method="post" action="/cursos/alumnos">
+            <div class="mb-3">
+              <select required class="form-select" aria-label="Default select example" name="curso_id" id="curso_id">
+                <option selected>Elija un curso</option>
+                <option value="1">React</option>
+                <option value="2">CI/CD</option>
+                <option value="3">Blockchain</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Nombre Estudiante</label>
+              <input type="text" class="form-control" name="nombre_estudiante" required aria-describedby="emailHelp">
+            </div>
+            <button type="submit" class="btn btn-primary">Unir</button>
+          </form>
+
+        </div>
+      </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+    <script src="scripts.js"></script>
   </body>
 </html>

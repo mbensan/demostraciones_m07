@@ -1,4 +1,5 @@
 const express = require('express');
+const { Curso, Estudiante } = require('./models.js')
 
 const app = express()
 
@@ -18,6 +19,40 @@ function getForm(req) {
     });
   });
 }
+
+app.post('/cursos', async (req, res) => {
+  const nombre = req.body.nombre
+  const horario = req.body.horario
+
+  await Curso.create({
+    nombre, horario
+  })
+
+  res.redirect('/')
+})
+
+app.get('/cursos', async (req, res) => {
+  const cursos = await Curso.findAll({
+    include: [{
+      model: Estudiante
+    }]
+  })
+
+  res.json({cursos})
+})
+
+app.post('/cursos/alumnos', async (req, res) => {
+  const curso_id = req.body.curso_id
+  const nombre_estudiante = req.body.nombre_estudiante
+
+  const curso = await Curso.findByPk(curso_id)
+  await curso.createEstudiante({
+    nombre: nombre_estudiante
+  })
+
+  console.log(curso);
+  res.redirect('/')
+})
 
 app.get('*', (req, res) => {
   res.statusCode = 404
